@@ -34,6 +34,8 @@ public class CharacterControler : MonoBehaviour
                 if (Vector3.Distance(transform.position, MoveTarget) < .2f)
                 {
                     isMoving = false;
+
+                    GameManager.instance.FinishedMovement();
                 }
             }
         }

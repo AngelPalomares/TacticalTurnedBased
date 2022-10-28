@@ -10,11 +10,68 @@ public class GameManager : MonoBehaviour
     {
         instance = this;
     }
+    //Active players
     public CharacterControler ActivePlayer;
+
+    //creates list for all the characters
+    public List<CharacterControler> allchars = new List<CharacterControler>();
+    //creates a seperate list for the Player team as well as the enemy team
+    public List<CharacterControler> Playertean = new List<CharacterControler>(), enemyteam = new List<CharacterControler>();
+    //current character that is active
+    private int CurrentChar;
+    //Points that are used to determine the amount of actions you can do
+    public int TotalTurnPoints = 2;
+    private int TurnPointsRemaining;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        //creates a temp list for randomization
+        List<CharacterControler> templist = new List<CharacterControler>();
+        templist.AddRange(FindObjectsOfType<CharacterControler>());
+
+        int iterations = templist.Count + 50;
+        //while loop to decide who goes first
+        while(templist.Count > 0 && iterations > 0)
+        {
+            int RandomPick = Random.Range(0, templist.Count);
+            allchars.Add(templist[RandomPick]);
+
+            templist.RemoveAt(RandomPick);
+            iterations--;
+        }
+
+        //Gets the character controller and determines if they are a player team or enemy team and puts them on the respected list
+        foreach(CharacterControler cc in allchars)
+        {
+            if(cc.isEnemy == false)
+            {
+                Playertean.Add(cc);
+            }
+            else
+            {
+                enemyteam.Add(cc);
+            }
+        }
+        allchars.Clear();
+
+        if(Random.value >= .5f)
+        {
+            allchars.AddRange(Playertean);
+            allchars.AddRange(enemyteam);
+        }
+        else
+        {
+            allchars.AddRange(enemyteam);
+            allchars.AddRange(Playertean);
+        }
+
+
+        ActivePlayer = allchars[0];
+        CameraController.instance.SetMoveTarget(ActivePlayer.transform.position);
+
+        CurrentChar = -1;
+        EndTurn();
     }
 
     // Update is called once per frame
@@ -22,4 +79,47 @@ public class GameManager : MonoBehaviour
     {
         
     }
+    //ends the turn
+    public void FinishedMovement()
+    {
+        SpendTurnPoints();
+    }
+
+    public void SpendTurnPoints()
+    {
+        TurnPointsRemaining -= 1;
+        if(TurnPointsRemaining <= 0)
+        {
+            EndTurn();
+        }
+    }
+    //ends the turm and changes to the other player
+    public void EndTurn()
+    {
+        CurrentChar++;
+        if (CurrentChar >= allchars.Count)
+        {
+            CurrentChar = 0;
+        }
+        ActivePlayer = allchars[CurrentChar];
+
+        CameraController.instance.SetMoveTarget(ActivePlayer.transform.position);
+
+        TurnPointsRemaining = TotalTurnPoints;
+        if(ActivePlayer.isEnemy == false)
+        {
+
+        }
+        else
+        {
+            StartCoroutine(AISkipCo());
+        }
+    }
+
+    public IEnumerator AISkipCo()
+    {
+        yield return new WaitForSeconds(1f);
+        EndTurn();
+    }
+        
 }
