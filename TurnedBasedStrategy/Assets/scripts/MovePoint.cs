@@ -8,5 +8,7 @@ public class MovePoint : MonoBehaviour
     {
         //FindObjectOfType<CharacterControler>().MoveToPoint(transform.position);
         GameManager.instance.ActivePlayer.MoveToPoint(transform.position);
+
+        MoveGrid.instance.HideMovePoints();
     }
 }

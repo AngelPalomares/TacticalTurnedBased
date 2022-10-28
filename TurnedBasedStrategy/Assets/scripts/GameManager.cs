@@ -91,6 +91,9 @@ public class GameManager : MonoBehaviour
         if(TurnPointsRemaining <= 0)
         {
             EndTurn();
+        }else
+        {
+            MoveGrid.instance.ShowPointsInRange(ActivePlayer.moveRange, ActivePlayer.transform.position);
         }
     }
     //ends the turm and changes to the other player
@@ -108,7 +111,7 @@ public class GameManager : MonoBehaviour
         TurnPointsRemaining = TotalTurnPoints;
         if(ActivePlayer.isEnemy == false)
         {
-
+            MoveGrid.instance.ShowPointsInRange(ActivePlayer.moveRange, ActivePlayer.transform.position);
         }
         else
         {

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MoveGrid : MonoBehaviour
 {
+    public static MoveGrid instance;
     public MovePoint StartPoint;
     public Vector2Int SpawnRage;
 
@@ -13,11 +14,17 @@ public class MoveGrid : MonoBehaviour
 
     public List<MovePoint> allmovepoints = new List<MovePoint>();
 
+    private void Awake()
+    {
+        instance = this;
+        GenerateMoveGrid();
+        HideMovePoints();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        GenerateMoveGrid();
-        //HideMovePoints();
+
     }
 
     // Update is called once per frame
@@ -54,6 +61,28 @@ public class MoveGrid : MonoBehaviour
         foreach(MovePoint mp in allmovepoints)
         {
             mp.gameObject.SetActive(false);
+        }
+    }
+
+    public void ShowPointsInRange(float MoveRange, Vector3 CenterPoint)
+    {
+        HideMovePoints();
+
+        foreach(MovePoint mp in allmovepoints)
+        {
+            if(Vector3.Distance(CenterPoint,mp.transform.position) <=MoveRange)
+            {
+                mp.gameObject.SetActive(true);
+
+                foreach(CharacterControler cc in GameManager.instance.allchars)
+                {
+                    if(Vector3.Distance(cc.transform.position, mp.transform.position) < .5f)
+                    {
+                        mp.gameObject.SetActive(false);
+                    }
+                }
+
+            }
         }
     }
 }
