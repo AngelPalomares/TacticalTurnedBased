@@ -21,7 +21,10 @@ public class GameManager : MonoBehaviour
     private int CurrentChar;
     //Points that are used to determine the amount of actions you can do
     public int TotalTurnPoints = 2;
-    private int TurnPointsRemaining;
+    [HideInInspector]
+    public int TurnPointsRemaining;
+
+    public int CurrentActionCost = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -87,14 +90,24 @@ public class GameManager : MonoBehaviour
 
     public void SpendTurnPoints()
     {
-        TurnPointsRemaining -= 1;
+        TurnPointsRemaining -= CurrentActionCost;
         if(TurnPointsRemaining <= 0)
         {
             EndTurn();
         }else
         {
-            MoveGrid.instance.ShowPointsInRange(ActivePlayer.moveRange, ActivePlayer.transform.position);
+            if (ActivePlayer.isEnemy == false)
+            {
+                //MoveGrid.instance.ShowPointsInRange(ActivePlayer.moveRange, ActivePlayer.transform.position);
+
+                PlayerInputMenu.instance.ShowInputMenu();
+            }
+            else
+            {
+                PlayerInputMenu.instance.HideMenus();
+            }
         }
+        PlayerInputMenu.instance.UpdateTurnPointText(TurnPointsRemaining);
     }
     //ends the turm and changes to the other player
     public void EndTurn()
@@ -111,12 +124,21 @@ public class GameManager : MonoBehaviour
         TurnPointsRemaining = TotalTurnPoints;
         if(ActivePlayer.isEnemy == false)
         {
-            MoveGrid.instance.ShowPointsInRange(ActivePlayer.moveRange, ActivePlayer.transform.position);
+            //MoveGrid.instance.ShowPointsInRange(ActivePlayer.moveRange, ActivePlayer.transform.position);
+
+            PlayerInputMenu.instance.ShowInputMenu();
+            PlayerInputMenu.instance.TurnPointText.gameObject.SetActive(true);
         }
         else
         {
+            PlayerInputMenu.instance.HideMenus();
+            PlayerInputMenu.instance.TurnPointText.gameObject.SetActive(false);
             StartCoroutine(AISkipCo());
         }
+
+        CurrentActionCost = 1;
+
+        PlayerInputMenu.instance.UpdateTurnPointText(TurnPointsRemaining);
     }
 
     public IEnumerator AISkipCo()

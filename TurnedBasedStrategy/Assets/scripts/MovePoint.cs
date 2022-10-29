@@ -10,5 +10,7 @@ public class MovePoint : MonoBehaviour
         GameManager.instance.ActivePlayer.MoveToPoint(transform.position);
 
         MoveGrid.instance.HideMovePoints();
+
+        PlayerInputMenu.instance.HideMenus();
     }
 }
