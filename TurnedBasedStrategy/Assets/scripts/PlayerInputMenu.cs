@@ -8,7 +8,7 @@ public class PlayerInputMenu : MonoBehaviour
 {
     public static PlayerInputMenu instance;
     
-    public GameObject InputMenu,MoveMenu, MeleeButton;
+    public GameObject InputMenu,MoveMenu, MeleeButton,FiringMenu;
 
     public TMP_Text TurnPointText,ErrorText;
 
@@ -25,6 +25,7 @@ public class PlayerInputMenu : MonoBehaviour
         InputMenu.SetActive(false);
         MoveMenu.SetActive(false);
         MeleeButton.SetActive(false);
+        FiringMenu.SetActive(false);
     }
 
     public void ShowInputMenu()
@@ -37,6 +38,12 @@ public class PlayerInputMenu : MonoBehaviour
         HideMenus();
         MoveMenu.SetActive(true);
         ShowMove();
+    }
+
+    public void ShowFiringMenu()
+    {
+        HideMenus();
+        FiringMenu.SetActive(true);
     }
 
     public void ShowMove()
@@ -55,6 +62,14 @@ public class PlayerInputMenu : MonoBehaviour
             MoveGrid.instance.ShowPointsInRange(GameManager.instance.ActivePlayer.RunRange, GameManager.instance.ActivePlayer.transform.position);
             GameManager.instance.CurrentActionCost = 2;
         }
+    }
+
+    public void HideFiringMenu()
+    {
+        HideMenus();
+        ShowInputMenu();
+
+        GameManager.instance.TargetDisplay.SetActive(false);
     }
 
     public void HideMoveMenu()
@@ -112,6 +127,7 @@ public class PlayerInputMenu : MonoBehaviour
         HideMenus();
         //GameManager.instance.SpendTurnPoints();
 
+        GameManager.instance.TargetDisplay.SetActive(false);
         StartCoroutine(WaitToEndActionCo(1f));
     }
 
@@ -153,5 +169,42 @@ public class PlayerInputMenu : MonoBehaviour
             }
 
         }
+    }
+
+    public void CheckShoot()
+    {
+        GameManager.instance.ActivePlayer.GetShootTarget();
+
+        if(GameManager.instance.ActivePlayer.ShootTargets.Count > 0)
+        {
+            ShowFiringMenu();
+            GameManager.instance.TargetDisplay.SetActive(true);
+            GameManager.instance.TargetDisplay.transform.position = GameManager.instance.ActivePlayer.ShootTargets[GameManager.instance.ActivePlayer.currentShootTarget].transform.position;
+        }
+        else
+        {
+            ShowErrorText("No Enemies in Firing Range");
+        }
+    }
+
+    public void NextShootTarget()
+    {
+        GameManager.instance.ActivePlayer.currentShootTarget++;
+        if (GameManager.instance.ActivePlayer.currentShootTarget >= GameManager.instance.ActivePlayer.ShootTargets.Count)
+        {
+            GameManager.instance.ActivePlayer.currentShootTarget = 0;
+        }
+        GameManager.instance.TargetDisplay.transform.position = GameManager.instance.ActivePlayer.ShootTargets[GameManager.instance.ActivePlayer.currentShootTarget].transform.position;
+    }
+
+    public void FireShot()
+    {
+        GameManager.instance.ActivePlayer.FireShot();
+
+        GameManager.instance.CurrentActionCost = 1;
+        HideMenus();
+
+        GameManager.instance.TargetDisplay.SetActive(false);
+        StartCoroutine(WaitToEndActionCo(1f));
     }
 }
