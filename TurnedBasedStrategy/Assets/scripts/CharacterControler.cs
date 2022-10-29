@@ -16,6 +16,15 @@ public class CharacterControler : MonoBehaviour
 
     public float moveRange = 3.5f,RunRange = 8f;
 
+    public float MeleeRange = 1.5f;
+    [HideInInspector]
+    public List<CharacterControler> meleeTargets = new List<CharacterControler>();
+
+    //[HideInInspector]
+    public int CurrentMeleeTarget;
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -49,5 +58,40 @@ public class CharacterControler : MonoBehaviour
 
         NavAgent.SetDestination(MoveTarget);
         isMoving = true;
+    }
+
+    public void GetMeleeTargets()
+    {
+        meleeTargets.Clear();
+
+        if(isEnemy == false)
+        {
+            foreach(CharacterControler cc in GameManager.instance.enemyteam)
+            {
+                if(Vector3.Distance(transform.position, cc.transform.position) < MeleeRange)
+                {
+                    meleeTargets.Add(cc);
+                }
+            }
+        }
+        else
+        {
+            foreach (CharacterControler cc in GameManager.instance.Playertean)
+            {
+                if (Vector3.Distance(transform.position, cc.transform.position) < MeleeRange)
+                {
+                    meleeTargets.Add(cc);
+                }
+            }
+        }
+        if(CurrentMeleeTarget >= meleeTargets.Count)
+        {
+            CurrentMeleeTarget = 0;
+        }
+    }
+
+    public void DoMelee()
+    {
+        meleeTargets[CurrentMeleeTarget].gameObject.SetActive(false);
     }
 }
