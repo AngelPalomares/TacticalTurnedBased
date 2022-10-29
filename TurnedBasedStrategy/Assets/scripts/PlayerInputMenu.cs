@@ -10,7 +10,11 @@ public class PlayerInputMenu : MonoBehaviour
     
     public GameObject InputMenu,MoveMenu, MeleeButton;
 
-    public TMP_Text TurnPointText;
+    public TMP_Text TurnPointText,ErrorText;
+
+    public float errorDisplayTime = 2f;
+    //[HideInInspector]
+    public float errorCounter;
 
     private void Awake()
     {
@@ -95,7 +99,7 @@ public class PlayerInputMenu : MonoBehaviour
         }
         else
         {
-            Debug.Log("No Enemies ner melee range");
+            ShowErrorText("No Enemies near melee range");
         }
     }
 
@@ -126,5 +130,28 @@ public class PlayerInputMenu : MonoBehaviour
             GameManager.instance.ActivePlayer.CurrentMeleeTarget = 0;
         }
         GameManager.instance.TargetDisplay.transform.position = GameManager.instance.ActivePlayer.meleeTargets[GameManager.instance.ActivePlayer.CurrentMeleeTarget].transform.position;
+    }
+
+    public void ShowErrorText(string MessageToShow)
+    {
+        ErrorText.text = MessageToShow;
+        ErrorText.gameObject.SetActive(true);
+
+
+        errorCounter = errorDisplayTime;
+    }
+
+    private void Update()
+    {
+        if(errorCounter > 0)
+        {
+            errorCounter -= Time.deltaTime;
+
+            if(errorCounter <= 0)
+            {
+                ErrorText.gameObject.SetActive(false);
+            }
+
+        }
     }
 }
