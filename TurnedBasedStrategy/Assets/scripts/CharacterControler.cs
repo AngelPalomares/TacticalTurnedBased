@@ -46,6 +46,9 @@ public class CharacterControler : MonoBehaviour
 
     public Vector3 ShotMissedRange;
 
+    public LineRenderer ShootLine;
+    public float ShotRameinTime = .5f;
+    private float ShotRemainCounter;
 
     // Start is called before the first frame update
     void Start()
@@ -54,6 +57,12 @@ public class CharacterControler : MonoBehaviour
         NavAgent.speed = MoveSpeed;
         CurrentHealth = MaxHealth;
         UpdateHealthDisplay();
+
+        ShootLine.transform.position = Vector3.zero;
+
+        ShootLine.transform.rotation = Quaternion.identity;
+
+        ShootLine.transform.SetParent(null);
     }
 
     // Update is called once per frame
@@ -72,6 +81,15 @@ public class CharacterControler : MonoBehaviour
 
                     GameManager.instance.FinishedMovement();
                 }
+            }
+        }
+        if(ShotRemainCounter > 0)
+        {
+            ShotRemainCounter -= Time.deltaTime;
+
+            if(ShotRemainCounter<= 0)
+            {
+                ShootLine.gameObject.SetActive(false);
             }
         }
     }
@@ -187,11 +205,13 @@ public class CharacterControler : MonoBehaviour
     {
         Vector3 targetPoint = new Vector3(ShootTargets[currentShootTarget].transform.position.x, ShootTargets[currentShootTarget].transform.position.y, ShootTargets[currentShootTarget].transform.position.z);
 
+        targetPoint.y = Random.Range(targetPoint.y, ShootTargets[currentShootTarget].transform.position.y + .25f);
+
         Vector3 targetOffset = new Vector3(Random.Range(-ShotMissedRange.x, ShotMissedRange.x),
             Random.Range(-ShotMissedRange.y, ShotMissedRange.y),
             Random.Range(-ShotMissedRange.z, ShotMissedRange.z));
 
-        targetOffset = targetOffset * (Vector3.Distance(targetPoint, ShootPoint.position) / ShootRange);
+        targetOffset = targetOffset * (Vector3.Distance(ShootTargets[currentShootTarget].transform.position, ShootPoint.position) / ShootRange);
 
         targetPoint += targetOffset;
 
@@ -213,11 +233,61 @@ public class CharacterControler : MonoBehaviour
                 Debug.Log(name + " Missed Target " + ShootTargets[currentShootTarget].name);
                 PlayerInputMenu.instance.ShowErrorText("Shot Missed!");
             }
+
+            ShootLine.SetPosition(0, ShootPoint.position);
+            ShootLine.SetPosition(1, hit.point);
         }
         else
         {
             Debug.Log(name + " Missed Target " + ShootTargets[currentShootTarget].name);
             PlayerInputMenu.instance.ShowErrorText("Shot Missed!");
+
+            ShootLine.SetPosition(0, ShootPoint.position);
+            ShootLine.SetPosition(1, ShootPoint.position + (ShootDirection * ShootRange));
         }
+
+        ShootLine.gameObject.SetActive(true);
+        ShotRemainCounter = ShotRameinTime;
+    }
+
+    public float CheckShotChance()
+    {
+        float shotChance = 0f;
+
+        RaycastHit hit;
+
+        Vector3 targetpoint = new Vector3(ShootTargets[currentShootTarget].transform.position.x, ShootTargets[currentShootTarget].transform.position.y, ShootTargets[currentShootTarget].transform.position.z);
+
+        Vector3 ShootDirection = (targetpoint - ShootPoint.position).normalized;
+
+        Debug.DrawRay(ShootPoint.position, ShootDirection * ShootRange, Color.red, 1f);
+        if (Physics.Raycast(ShootPoint.position, ShootDirection, out hit, ShootRange))
+        {
+            if (hit.collider.gameObject == ShootTargets[currentShootTarget].gameObject)
+            {
+                shotChance += 50f;
+            }
+        }
+
+        targetpoint.y = ShootTargets[currentShootTarget].transform.position.y + .25f;
+        ShootDirection = (targetpoint - ShootPoint.position).normalized;
+
+        Debug.DrawRay(ShootPoint.position, ShootDirection * ShootRange, Color.red, 1f);
+        if (Physics.Raycast(ShootPoint.position, ShootDirection, out hit, ShootRange))
+        {
+            if (hit.collider.gameObject == ShootTargets[currentShootTarget].gameObject)
+            {
+                shotChance += 50f;
+            }
+        }
+
+        shotChance = shotChance * .95f;
+        shotChance *= 1f - (Vector3.Distance(ShootTargets[currentShootTarget].transform.position, ShootPoint.position) / ShootRange);
+        return shotChance;
+    }
+
+    public void LookAtTarget(Transform Target)
+    {
+        transform.LookAt(new Vector3(Target.position.x, transform.position.y, Target.position.z), Vector3.up);
     }
 }

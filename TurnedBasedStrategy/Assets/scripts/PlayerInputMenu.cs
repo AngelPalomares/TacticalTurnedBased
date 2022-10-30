@@ -16,6 +16,8 @@ public class PlayerInputMenu : MonoBehaviour
     //[HideInInspector]
     public float errorCounter;
 
+    public TMP_Text HitChanceText;
+
     private void Awake()
     {
         instance = this;
@@ -44,6 +46,8 @@ public class PlayerInputMenu : MonoBehaviour
     {
         HideMenus();
         FiringMenu.SetActive(true);
+
+        UpdateHitChance();
     }
 
     public void ShowMove()
@@ -70,6 +74,8 @@ public class PlayerInputMenu : MonoBehaviour
         ShowInputMenu();
 
         GameManager.instance.TargetDisplay.SetActive(false);
+
+        CameraController.instance.SetMoveTarget(GameManager.instance.ActivePlayer.transform.position);
     }
 
     public void HideMoveMenu()
@@ -111,6 +117,7 @@ public class PlayerInputMenu : MonoBehaviour
 
             GameManager.instance.TargetDisplay.SetActive(true);
             GameManager.instance.TargetDisplay.transform.position = GameManager.instance.ActivePlayer.meleeTargets[GameManager.instance.ActivePlayer.CurrentMeleeTarget].transform.position;
+            GameManager.instance.ActivePlayer.LookAtTarget(GameManager.instance.ActivePlayer.meleeTargets[GameManager.instance.ActivePlayer.CurrentMeleeTarget].transform);
         }
         else
         {
@@ -136,6 +143,7 @@ public class PlayerInputMenu : MonoBehaviour
         yield return new WaitForSeconds(TimeToWait);
 
         GameManager.instance.SpendTurnPoints();
+        CameraController.instance.SetMoveTarget(GameManager.instance.ActivePlayer.transform.position);
     }
 
     public void NextMeleeTarget()
@@ -146,6 +154,8 @@ public class PlayerInputMenu : MonoBehaviour
             GameManager.instance.ActivePlayer.CurrentMeleeTarget = 0;
         }
         GameManager.instance.TargetDisplay.transform.position = GameManager.instance.ActivePlayer.meleeTargets[GameManager.instance.ActivePlayer.CurrentMeleeTarget].transform.position;
+
+        GameManager.instance.ActivePlayer.LookAtTarget(GameManager.instance.ActivePlayer.meleeTargets[GameManager.instance.ActivePlayer.CurrentMeleeTarget].transform);
     }
 
     public void ShowErrorText(string MessageToShow)
@@ -180,6 +190,10 @@ public class PlayerInputMenu : MonoBehaviour
             ShowFiringMenu();
             GameManager.instance.TargetDisplay.SetActive(true);
             GameManager.instance.TargetDisplay.transform.position = GameManager.instance.ActivePlayer.ShootTargets[GameManager.instance.ActivePlayer.currentShootTarget].transform.position;
+
+            GameManager.instance.ActivePlayer.LookAtTarget(GameManager.instance.ActivePlayer.ShootTargets[GameManager.instance.ActivePlayer.currentShootTarget].transform);
+
+            CameraController.instance.SetFireView();
         }
         else
         {
@@ -195,6 +209,10 @@ public class PlayerInputMenu : MonoBehaviour
             GameManager.instance.ActivePlayer.currentShootTarget = 0;
         }
         GameManager.instance.TargetDisplay.transform.position = GameManager.instance.ActivePlayer.ShootTargets[GameManager.instance.ActivePlayer.currentShootTarget].transform.position;
+
+        UpdateHitChance();
+        GameManager.instance.ActivePlayer.LookAtTarget(GameManager.instance.ActivePlayer.ShootTargets[GameManager.instance.ActivePlayer.currentShootTarget].transform);
+        CameraController.instance.SetFireView();
     }
 
     public void FireShot()
@@ -206,5 +224,12 @@ public class PlayerInputMenu : MonoBehaviour
 
         GameManager.instance.TargetDisplay.SetActive(false);
         StartCoroutine(WaitToEndActionCo(1f));
+    }
+
+    public void UpdateHitChance()
+    {
+        float hitchance = Random.Range(50f, 95f);
+
+        HitChanceText.text = "Chance To Hit: " + GameManager.instance.ActivePlayer.CheckShotChance().ToString("F1") + "%";
     }
 }
