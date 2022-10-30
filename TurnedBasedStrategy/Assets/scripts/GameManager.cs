@@ -107,6 +107,8 @@ public class GameManager : MonoBehaviour
             else
             {
                 PlayerInputMenu.instance.HideMenus();
+
+                ActivePlayer.brain.ChooseAction();
             }
         }
         PlayerInputMenu.instance.UpdateTurnPointText(TurnPointsRemaining);
@@ -135,12 +137,16 @@ public class GameManager : MonoBehaviour
         {
             PlayerInputMenu.instance.HideMenus();
             PlayerInputMenu.instance.TurnPointText.gameObject.SetActive(false);
-            StartCoroutine(AISkipCo());
+            //StartCoroutine(AISkipCo());
+
+            ActivePlayer.brain.ChooseAction();
         }
 
         CurrentActionCost = 1;
 
         PlayerInputMenu.instance.UpdateTurnPointText(TurnPointsRemaining);
+
+        ActivePlayer.SetDefending(false);
     }
 
     public IEnumerator AISkipCo()

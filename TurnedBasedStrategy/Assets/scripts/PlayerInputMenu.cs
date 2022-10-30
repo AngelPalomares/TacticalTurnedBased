@@ -232,4 +232,10 @@ public class PlayerInputMenu : MonoBehaviour
 
         HitChanceText.text = "Chance To Hit: " + GameManager.instance.ActivePlayer.CheckShotChance().ToString("F1") + "%";
     }
+
+    public void Defend()
+    {
+        GameManager.instance.ActivePlayer.SetDefending(true);
+        GameManager.instance.EndTurn();
+    }
 }

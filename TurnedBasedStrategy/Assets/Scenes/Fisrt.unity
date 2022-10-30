@@ -2625,6 +2625,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Defend
       objectReference: {fileID: 0}
+    - target: {fileID: 1213058300931211606, guid: d1d425c1e2e9a445da416eaccf3aa562,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1027586829}
+    - target: {fileID: 1213058300931211606, guid: d1d425c1e2e9a445da416eaccf3aa562,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Defend
+      objectReference: {fileID: 0}
+    - target: {fileID: 1213058300931211606, guid: d1d425c1e2e9a445da416eaccf3aa562,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PlayerInputMenu, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 1213058300931211606, guid: d1d425c1e2e9a445da416eaccf3aa562,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4794603430448880052, guid: d1d425c1e2e9a445da416eaccf3aa562,
         type: 3}
       propertyPath: m_Pivot.x

@@ -15,6 +15,7 @@ public class CharacterControler : MonoBehaviour
     private bool isMoving;
 
     public bool isEnemy;
+    public AIBrain brain;
 
     public float moveRange = 3.5f,RunRange = 8f;
 
@@ -49,6 +50,9 @@ public class CharacterControler : MonoBehaviour
     public LineRenderer ShootLine;
     public float ShotRameinTime = .5f;
     private float ShotRemainCounter;
+
+    public GameObject Defense;
+    public bool isDefending;
 
     // Start is called before the first frame update
     void Start()
@@ -140,6 +144,10 @@ public class CharacterControler : MonoBehaviour
 
     public void TakeDamage(float damageToTake)
     {
+        if(isDefending == true)
+        {
+            damageToTake *= .5f;
+        }
         CurrentHealth -= damageToTake;
 
         if(CurrentHealth <= 0)
@@ -289,5 +297,11 @@ public class CharacterControler : MonoBehaviour
     public void LookAtTarget(Transform Target)
     {
         transform.LookAt(new Vector3(Target.position.x, transform.position.y, Target.position.z), Vector3.up);
+    }
+
+    public void SetDefending(bool shouldDefend)
+    {
+        isDefending = shouldDefend;
+        Defense.SetActive(isDefending);
     }
 }
