@@ -127,6 +127,21 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8295818423734732796, guid: af8fd2e914b2d4075a385fbd2b8bd4cd,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.12939204
+      objectReference: {fileID: 0}
+    - target: {fileID: 8295818423734732796, guid: af8fd2e914b2d4075a385fbd2b8bd4cd,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.9915935
+      objectReference: {fileID: 0}
+    - target: {fileID: 8295818423734732796, guid: af8fd2e914b2d4075a385fbd2b8bd4cd,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 194.869
+      objectReference: {fileID: 0}
     - target: {fileID: 8295818424357673400, guid: af8fd2e914b2d4075a385fbd2b8bd4cd,
         type: 3}
       propertyPath: brain
@@ -241,6 +256,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CharCon: {fileID: 4565160860578404177}
   WaitBeforeAttacking: 1
+  WaitAfterActing: 1
+  IgnoreShootChance: 100
 --- !u!4 &4565160861805152533 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8295818423734732796, guid: af8fd2e914b2d4075a385fbd2b8bd4cd,

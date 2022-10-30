@@ -85,4 +85,35 @@ public class MoveGrid : MonoBehaviour
             }
         }
     }
+
+    public List<MovePoint>Getmovepointsinrange(float moverange, Vector3 centerpoint)
+    {
+        List<MovePoint> foundpoints = new List<MovePoint>();
+
+
+        foreach (MovePoint mp in allmovepoints)
+        {
+            if (Vector3.Distance(centerpoint, mp.transform.position) <= moverange)
+            {
+                bool shouldAdd = true;
+                //mp.gameObject.SetActive(true);
+
+                foreach (CharacterControler cc in GameManager.instance.allchars)
+                {
+                    if (Vector3.Distance(cc.transform.position, mp.transform.position) < .5f)
+                    {
+                        shouldAdd = false;
+                    }
+                }
+
+                if(shouldAdd == true)
+                {
+                    foundpoints.Add(mp);
+                }
+
+            }
+        }
+
+        return foundpoints;
+    }
 }
